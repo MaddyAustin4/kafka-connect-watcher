@@ -72,23 +72,17 @@ class SnsChannel:
         if not isinstance(message, (str, dict)):
             raise TypeError(f"message must be str or dict, not {type(message)}")
         client = self.session.client("sns")
-        LOG.info(client.list_topics())
-        try:
-            if isinstance(message, str):
-                LOG.info("message is string")
-                client.publish(TopicArn=self.arn, Subject=subject, Message=message)
-            else:
-                LOG.info("message is not string")
-                client.publish(
-                    TopicArn=self.arn,
-                    Subject=subject,
-                    Message=json.dumps(message),
-                    MessageStructure="json",
-                )
-
-        except (client.exceptions, ClientError) as error:
-            LOG.exception(error)
-            LOG.error(f"{self.name} - Failed to send notification to {self.arn}")
+        if isinstance(message, str):
+            LOG.info("message is string")
+            client.publish(TopicArn=self.arn, Subject=subject, Message=message)
+        else:
+            LOG.info("message is not string")
+            client.publish(
+                TopicArn=self.arn,
+                Subject=subject,
+                Message=json.dumps(message),
+                MessageStructure="json",
+            )
 
     @staticmethod
     def render_message_template(
