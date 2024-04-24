@@ -72,10 +72,13 @@ class SnsChannel:
         if not isinstance(message, (str, dict)):
             raise TypeError(f"message must be str or dict, not {type(message)}")
         client = self.session.client("sns")
+        LOG.info(client.list_topics())
         try:
             if isinstance(message, str):
+                LOG.info("message is string")
                 client.publish(TopicArn=self.arn, Subject=subject, Message=message)
             else:
+                LOG.info("message is not string")
                 client.publish(
                     TopicArn=self.arn,
                     Subject=subject,
@@ -106,14 +109,17 @@ class SnsChannel:
             CONNECT_CLUSTER_ID=cluster_id,
             CONNECT_TRACE_ERROR=connector_error,
         )
+        LOG.info(f"{content=}")
         return content
 
     def send_error_notification(self, cluster: ConnectCluster, connector: Connector):
         """Send error notification"""
         subject = f"Kafka Connect error for {connector.name}"
         messages: dict = {}
+        LOG.info("sending error notification")
         try:
             connector_status = connector.status
+            LOG.info(f"{connector_status=}")
         except GenericNotFound:
             connector_status = "Connector does not have any workable status"
         for sns_message_type in self.messages_templates:

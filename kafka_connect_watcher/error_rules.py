@@ -191,6 +191,7 @@ class AutoCorrectRule:
                 connector.cycle_connector()
 
             if self.notify_targets:
+                LOG.info(f"notify_targets={self.notify_targets}")
                 for channel in self.notification_channels:
                     channel.send_error_notification(cluster, connector)
 
