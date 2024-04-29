@@ -192,7 +192,9 @@ class AutoCorrectRule:
 
             if self.notify_targets:
                 LOG.info(f"notify_targets={self.notify_targets}")
+                LOG.info(f"channels={self.notification_channels}")
                 for channel in self.notification_channels:
+                    LOG.info(f"{channel=}")
                     channel.send_error_notification(cluster, connector)
 
             time.sleep(interval_delta)
